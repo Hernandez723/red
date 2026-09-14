@@ -224,7 +224,7 @@ export function TitleBar({
           src={appIcon}
           alt=""
         /> 
-        {!hideHomeText && <h3 >zuno_</h3>}
+        {!hideHomeText && <h3>Rediplays</h3>}
       </button>
 
       <MusicTabs
