@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { isTauri } from "./environment";
 import { logInternalInfo } from "./logging";
 
 /**
@@ -101,7 +102,9 @@ async function sampleMemory(): Promise<void> {
    * how much physical RAM the OS currently allows, so it falls whenever anything trims it and
    * says nothing about what is held.
    */
-  const processes = await invoke<AppMemoryReport>("app_memory_report").catch(() => null);
+  const processes = isTauri()
+    ? await invoke<AppMemoryReport>("app_memory_report").catch(() => null)
+    : null;
   if (processes) peak.commitMb = Math.max(peak.commitMb, processes.totalCommitMb);
   const biggest = processes?.processes[0];
 

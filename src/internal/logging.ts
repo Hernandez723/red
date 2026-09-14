@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { isTauri } from "./environment";
 
 type LogLevel = "debug" | "info" | "warn" | "error";
 
@@ -125,13 +126,15 @@ function writeInternalLog(level: LogLevel, context: string, extra?: Record<strin
   };
   const safePayload = sanitizeForLog(payload);
   const payloadText = safeStringify(safePayload);
-  void invoke("frontend_log", {
-    level,
-    context,
-    payload: payloadText,
-  }).catch(() => {
-    // Logging must never interrupt the application flow.
-  });
+  if (isTauri()) {
+    void invoke("frontend_log", {
+      level,
+      context,
+      payload: payloadText,
+    }).catch(() => {
+      // Logging must never interrupt the application flow.
+    });
+  }
 
   if (level === "debug") {
     console.debug(`[internal][debug] ${context}`, payloadText, safePayload);

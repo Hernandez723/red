@@ -1,9 +1,12 @@
+import { initWebPolyfills, isTauri } from "./internal/environment";
+// Initialize web polyfills first so Tauri API imports do not throw unhandled TypeErrors in browsers
+initWebPolyfills();
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./ui/App";
 import { ErrorBoundary } from "./ui/components/ErrorBoundary";
 import "./ui/styles/global.css";
-import { isTauri } from "./internal/environment";
 import { logInternalError, logInternalInfo } from "./internal/logging";
 import { applyPaperPcMode, hydratePaperPcMode } from "./ui/settings/paperPcMode";
 import { applyTheme, hydrateTheme, watchSystemTheme } from "./ui/settings/theme";

@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { isTauri } from "../../internal/environment";
 import {
   availableMonitors,
   currentMonitor,
@@ -190,6 +191,7 @@ function queueMiniPlayerOp<T>(op: () => Promise<T>): Promise<T> {
 }
 
 async function createMiniPlayerWindow(): Promise<WebviewWindow | null> {
+  if (!isTauri()) return null;
   const existing = await WebviewWindow.getByLabel(MINI_PLAYER_LABEL);
   if (existing) return existing;
 
