@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { invoke, isTauri } from "@tauri-apps/api/core";
+import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { isTauri } from "../internal/environment";
 import type { PlayerState } from "./PlayerController";
 import type { PlayerControllerActions } from "./playerStore";
 import { logInternalWarn } from "../internal/logging";
@@ -15,7 +16,7 @@ type NativeMediaAction =
   | { action: "seekTo"; positionSec: number };
 
 const usesNativeWindowsMediaSession =
-  isTauri() && /Windows/i.test(navigator.userAgent);
+  isTauri() && typeof navigator !== "undefined" && /Windows/i.test(navigator.userAgent);
 /*
  * macOS goes through MPNowPlayingInfoCenter rather than the WebView's media session, because
  * only the native centre reaches Control Center, the lock screen and the F7-F9 keys. The Rust
@@ -29,9 +30,9 @@ const usesNativeWindowsMediaSession =
  * one to turn off.
  */
 const usesNativeMacosMediaSession =
-  isTauri() && /Macintosh|Mac OS X/i.test(navigator.userAgent);
+  isTauri() && typeof navigator !== "undefined" && /Macintosh|Mac OS X/i.test(navigator.userAgent);
 const usesNativeLinuxMediaSession =
-  isTauri() && /Linux/i.test(navigator.userAgent);
+  isTauri() && typeof navigator !== "undefined" && /Linux/i.test(navigator.userAgent);
 const usesNativeMediaSession =
   usesNativeWindowsMediaSession ||
   usesNativeMacosMediaSession ||
@@ -173,7 +174,7 @@ export function useMediaSession(
   }, [nativeMediaCommand, sendNativeMediaUpdate, state.currentTrack, state.status]);
 
   useEffect(() => {
-    if (mediaSessionEnabled || !("mediaSession" in navigator)) return;
+    if (mediaSessionEnabled || typeof navigator === "undefined" || !navigator.mediaSession) return;
 
     // Toggle turned off, or the platform uses its native session: clear whatever the
     // browser bridge was showing so no duplicate now-playing entry survives.
@@ -192,7 +193,7 @@ export function useMediaSession(
   }, [mediaSessionEnabled]);
 
   useEffect(() => {
-    if (!mediaSessionEnabled || !("mediaSession" in navigator)) return;
+    if (!mediaSessionEnabled || typeof navigator === "undefined" || !navigator.mediaSession) return;
 
     const handlers: Partial<Record<MediaSessionAction, MediaSessionActionHandler>> = {
       play: () => void controller.play(),
@@ -226,6 +227,7 @@ export function useMediaSession(
     }
 
     return () => {
+      if (typeof navigator === "undefined" || !navigator.mediaSession) return;
       for (const action of Object.keys(handlers) as MediaSessionAction[]) {
         try {
           navigator.mediaSession.setActionHandler(action, null);
@@ -237,17 +239,19 @@ export function useMediaSession(
   }, [controller, mediaSessionEnabled]);
 
   useEffect(() => {
-    if (!mediaSessionEnabled || !("mediaSession" in navigator)) return;
+    if (!mediaSessionEnabled || typeof navigator === "undefined" || !navigator.mediaSession) return;
 
     const track = state.currentTrack;
     try {
-      navigator.mediaSession.metadata = track
-        ? new MediaMetadata({
-            title: track.title,
-            artist: track.artist,
-            artwork: track.artworkUrl ? [{ src: track.artworkUrl }] : [],
-          })
-        : null;
+      if (typeof MediaMetadata !== "undefined") {
+        navigator.mediaSession.metadata = track
+          ? new MediaMetadata({
+              title: track.title,
+              artist: track.artist,
+              artwork: track.artworkUrl ? [{ src: track.artworkUrl }] : [],
+            })
+          : null;
+      }
       navigator.mediaSession.playbackState = getBrowserPlaybackState(state.status);
     } catch {
       // WebView media-session support varies by installed runtime version.
@@ -257,14 +261,16 @@ export function useMediaSession(
   useEffect(() => {
     if (
       !mediaSessionEnabled
-      || !("mediaSession" in navigator)
+      || typeof navigator === "undefined"
+      || !navigator.mediaSession
       || !state.currentTrack
     ) return;
 
     const updatePosition = () => {
+      if (!navigator.mediaSession) return;
       const duration = controller.getDuration() || state.currentTrack?.durationSec || 0;
       const position = Math.min(duration, Math.max(0, controller.getCurrentTime()));
-      if (duration > 0) {
+      if (duration > 0 && typeof navigator.mediaSession.setPositionState === "function") {
         try {
           navigator.mediaSession.setPositionState({
             duration,

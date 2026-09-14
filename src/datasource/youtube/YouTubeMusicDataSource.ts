@@ -3735,7 +3735,7 @@ export class YouTubeMusicDataSource extends DataSource {
     try {
       const client = await this.getWebClient();
       const channel = await client.getChannel(channelId);
-      const metadata = channel.metadata as {
+      const metadata = (channel as { metadata?: unknown } | undefined)?.metadata as {
         avatar?: Array<{ url?: string; width?: number; height?: number }>;
       } | undefined;
       return selectArtworkUrl(collectArtworkCandidates(metadata?.avatar));
