@@ -1,0 +1,54 @@
+/**
+ * Tizen Smart TV (10-foot UI) Styles & Spatial Navigation Focus Ring
+ */
+
+/* Hide mouse cursor on TV devices */
+.tizen-tv,
+body[data-tizen="true"] {
+  cursor: none !important;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+}
+
+.tizen-tv * {
+  cursor: none !important;
+}
+
+/* High-visibility Spatial Navigation Focus Ring */
+:focus-visible,
+.tizen-focused {
+  outline: 3px solid #3b82f6 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6) !important;
+  transform: scale(1.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, outline 0.15s ease;
+  z-index: 50 !important;
+}
+
+/* Card item focus specific styling */
+.tizen-tv .track-card.tizen-focused,
+.tizen-tv .album-card.tizen-focused,
+.tizen-tv .playlist-card.tizen-focused,
+.tizen-tv [role="button"].tizen-focused {
+  outline: 3px solid #60a5fa !important;
+  transform: scale(1.05) translateY(-2px);
+}
+
+/* Base scaling for large TV screens (1080p / 4K) */
+@media screen and (min-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+@media screen and (min-width: 3840px) {
+  html {
+    font-size: 28px;
+  }
+}
+
+/* Disable unwanted TV browser outline */
+* {
+  -webkit-tap-highlight-color: transparent;
+}

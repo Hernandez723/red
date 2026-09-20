@@ -1,4 +1,4 @@
-import { initWebPolyfills, isTauri } from "./internal/environment";
+import { initWebPolyfills, isTauri, isTizen, isTV } from "./internal/environment";
 // Initialize web polyfills first so Tauri API imports do not throw unhandled TypeErrors in browsers
 initWebPolyfills();
 
@@ -7,6 +7,9 @@ import ReactDOM from "react-dom/client";
 import App from "./ui/App";
 import { ErrorBoundary } from "./ui/components/ErrorBoundary";
 import "./ui/styles/global.css";
+import "./ui/styles/tizen.css";
+import { initTizenKeys } from "./tizen/tizenKeys";
+import { initSpatialNavigation } from "./tizen/spatialNavigation";
 import { logInternalError, logInternalInfo } from "./internal/logging";
 import { applyPaperPcMode, hydratePaperPcMode } from "./ui/settings/paperPcMode";
 import { applyTheme, hydrateTheme, watchSystemTheme } from "./ui/settings/theme";
@@ -59,6 +62,14 @@ applyTheme();
 watchSystemTheme();
 applyPaperPcMode();
 applyRenderEffects();
+// Initialize Tizen TV features
+if (isTizen() || isTV()) {
+  document.body.setAttribute("data-tizen", "true");
+  document.body.classList.add("tizen-tv");
+}
+initTizenKeys();
+initSpatialNavigation();
+
 // One line a minute in the app log, so "the renderer is using 220 MB" can be split into heap,
 // DOM, images and subframes instead of guessed at. Settings → Troubleshooting → Open log.
 startMemoryReport();

@@ -14,8 +14,22 @@ export function isTauri(): boolean {
   return Boolean(w.__TAURI_IPC__ || w.__TAURI_POST_MESSAGE__ || w.__TAURI_INTERNALS__?.__IS_NATIVE_TAURI__);
 }
 
+export function isTizen(): boolean {
+  if (typeof window === "undefined") return false;
+  const w = window as unknown as { tizen?: unknown; webapis?: unknown };
+  if (Boolean(w.tizen || w.webapis)) return true;
+  if (typeof navigator !== "undefined" && /Tizen|SmartTV|Samsung/i.test(navigator.userAgent)) {
+    return true;
+  }
+  return false;
+}
+
 export function isWeb(): boolean {
   return !isTauri();
+}
+
+export function isTV(): boolean {
+  return isTizen() || (typeof navigator !== "undefined" && /TV|SmartTV|LargeScreen/i.test(navigator.userAgent));
 }
 
 /**

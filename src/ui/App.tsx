@@ -64,6 +64,7 @@ import {
 } from "../player/playerStore";
 import { clearAppSession, loadAppSession, saveAppSession } from "../player/appSession";
 import { useMediaSession } from "../player/useMediaSession";
+import { useTizenRemote } from "../tizen/useTizenRemote";
 import { LastFmService } from "../player/LastFm";
 import { playerUIStore, usePlayerUIState } from "./stores/playerUIStore";
 import { AppLoadingScreen } from "./components/AppLoadingScreen";
@@ -284,6 +285,7 @@ async function hasStoredYoutubeSession(): Promise<boolean> {
 
 export default function App() {
   useDisableContextMenu();
+  useTizenRemote();
   const libraryState = useLibraryState();
   /*
    * Only the three fields the root actually reads. Selecting the whole state here made the

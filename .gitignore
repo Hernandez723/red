@@ -12,6 +12,7 @@ dist
 dist-ssr
 .vite
 *.local
+*.wgt
 
 # Editor directories and files
 .vscode/*

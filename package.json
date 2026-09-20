@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit",
     "check": "node scripts/run-checks.mjs",
     "verify": "npm run typecheck && npm run check",
+    "build:tizen": "tsc && vite build && node scripts/package-tizen.mjs",
+    "package:tizen": "node scripts/package-tizen.mjs",
     "tauri": "tauri"
   },
   "dependencies": {

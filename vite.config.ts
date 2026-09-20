@@ -10,6 +10,7 @@ const resolveEntry = (path: string) => fileURLToPath(new URL(path, import.meta.u
 
 // https://vite.dev/config/
 export default defineConfig(async () => ({
+  base: "./",
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
