@@ -153,12 +153,6 @@ import {
   useLinuxMediaSession,
 } from "../settings/mediaSession";
 import {
-  SIDEBAR_MODES,
-  setSidebarMode,
-  useSidebarMode,
-  type SidebarMode,
-} from "../settings/sidebarMode";
-import {
   setAuthenticatedStreaming,
   setYouTubeScrobbling,
   useAuthenticatedStreaming,
@@ -743,7 +737,6 @@ export function SettingsPage({
   const keyboardShortcuts = useKeyboardShortcuts();
   const miniPlayerEnabled = useMiniPlayerEnabled();
   const miniPlayerHoverAction = useMiniPlayerHoverAction();
-  const sidebarMode = useSidebarMode();
   const audioEngineMode = useAudioEngineMode();
   const authenticatedStreaming = useAuthenticatedStreaming();
   const youtubeScrobbling = useYouTubeScrobbling();
@@ -2008,30 +2001,6 @@ export function SettingsPage({
               checked={miniPlayerEnabled}
               onCheckedChange={setMiniPlayerEnabled}
             />
-
-            <SettingRow
-              title="Library sidebar"
-              description="How much room the playlist rail takes. Expand on hover keeps the collapsed width while still letting you read the list."
-            >
-              {() => (
-                <Select
-                  className="w-52"
-                  value={sidebarMode}
-                  onValueChange={(value) => setSidebarMode(value as SidebarMode)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SIDEBAR_MODES.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </SettingRow>
 
             <SettingRow
               title="Mini player hover bar"

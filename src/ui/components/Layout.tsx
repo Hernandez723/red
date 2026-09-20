@@ -4,15 +4,14 @@ import { cn } from "@/lib/utils";
 import { SearchBar } from "./SearchBar";
 import { TrackArtwork } from "./TrackArtwork";
 import { useAmbientArtwork } from "../stores/ambientArtworkStore";
-import { Sidebar } from "./Sidebar";
 import type { Album, Playlist } from "../../datasource/types";
 
 interface LayoutProps {
   children: ReactNode;
-  sidebarWidth: number;
-  onSidebarWidthChange: (width: number) => void;
-  onNavigateAlbum: (album: Album) => void;
-  onNavigatePlaylist: (playlist: Playlist) => void;
+  sidebarWidth?: number;
+  onSidebarWidthChange?: (width: number) => void;
+  onNavigateAlbum?: (album: Album) => void;
+  onNavigatePlaylist?: (playlist: Playlist) => void;
   showSearchBar: boolean;
   onOpenSearch: () => void;
   canGoBack: boolean;
@@ -41,10 +40,6 @@ const MAX_SCROLLBAR_THUMB_HEIGHT = 86;
 
 export function Layout({ 
   children, 
-  sidebarWidth,
-  onSidebarWidthChange,
-  onNavigateAlbum,
-  onNavigatePlaylist,
   showSearchBar,
   onOpenSearch,
   canGoBack,
@@ -52,7 +47,6 @@ export function Layout({
   onNavigateBack,
   onNavigateForward,
   fullBleedContent = false,
-  hideSidebar = false,
   showTransientScrollbar = false,
   rightPanel,
   rightPanelWidth = 340,
@@ -232,17 +226,9 @@ export function Layout({
      
 
       <div className="relative flex min-h-0 min-w-0 flex-1">
-        {!hideSidebar && (
-          <Sidebar
-            width={sidebarWidth}
-            onWidthChange={onSidebarWidthChange}
-            onNavigateAlbum={onNavigateAlbum}
-            onNavigatePlaylist={onNavigatePlaylist}
-          />
-        )}
         {/* No backdrop-blur: `bg-background` is fully opaque, so a backdrop filter here costs a
             composited layer and a blur pass to render something nothing can see through. */}
-        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col gap-3 px-4 pt-3 bg-background rounded-tl-lg">
+        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col gap-3 px-4 pt-3 bg-background">
           {/*
             Ambient wash for the page beneath. Rendered here rather than inside the page so
             it can start at the very top of the column — behind the search bar — instead of
@@ -254,7 +240,7 @@ export function Layout({
           {ambientArtwork ? (
             <span
               key={ambientArtwork}
-              className="pointer-events-none absolute inset-x-0 top-0 h-[22rem] overflow-hidden [mask-image:linear-gradient(to_bottom,background_25%,transparent)] rounded-tl-lg"
+              className="pointer-events-none absolute inset-x-0 top-0 h-[22rem] overflow-hidden [mask-image:linear-gradient(to_bottom,background_25%,transparent)]"
               aria-hidden="true"
               data-fx="ambient"
             >

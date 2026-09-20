@@ -40,7 +40,7 @@ interface TitleBarProps {
   activeTabId: string;
   playingTabId: string | null;
   nonClosableTabId?: string | null;
-  sidebarWidth: number;
+  sidebarWidth?: number;
   isHomeActive: boolean;
   onNavigateHome: () => void;
   onCreateTab: () => void;
@@ -64,7 +64,6 @@ export function TitleBar({
   activeTabId,
   playingTabId,
   nonClosableTabId,
-  sidebarWidth,
   isHomeActive,
   onNavigateHome,
   onCreateTab,
@@ -120,7 +119,6 @@ export function TitleBar({
     startY: number;
   } | null>(null);
   const suppressHomeClickRef = useRef(false);
-  const hideHomeText = sidebarWidth <= 120;
 
   const startWindowDrag = async () => {
     if (!appWindow) return;
@@ -168,11 +166,9 @@ export function TitleBar({
     <div className="relative z-30 flex h-[var(--titlebar-height)] shrink-0 items-stretch bg-background">
       <button
         type="button"
-        style={{ width: `${sidebarWidth}px` }}
         className={cn(
-          "flex shrink-0 items-center gap-1 px-4 text-sm font-bold  transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-inset",
+          "flex shrink-0 items-center gap-2 px-3.5 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-inset",
           isHomeActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
-          hideHomeText && "justify-center gap-0 px-0",
         )}
         onClick={() => {
           if (suppressHomeClickRef.current) {
@@ -220,11 +216,11 @@ export function TitleBar({
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
-          className="size-6 "
+          className="size-6"
           src={appIcon}
           alt=""
         /> 
-        {!hideHomeText && <h3>Rediplays</h3>}
+        <h3>Rediplays</h3>
       </button>
 
       <MusicTabs
